@@ -77,9 +77,14 @@ export interface CartItem {
 }
 
 export interface User {
+  id: string;
   name: string;
   email: string;
+  password?: string;
+  profileImage?: string;
+  phone?: string;
   bookings: Booking[];
+  isLoggedIn: boolean;
 }
 
 export interface Booking {
@@ -95,4 +100,6 @@ export interface SearchFilters {
   minPrice?: number;
   maxPrice?: number;
   type?: AttractionType | ActivityType;
+  departureCity?: string;
+  arrivalCity?: string;
 }

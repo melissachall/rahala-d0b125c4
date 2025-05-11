@@ -1,6 +1,6 @@
 
 import React, { createContext, useContext, useState, useMemo, ReactNode } from 'react';
-import { CartItem, City, Flight, Activity, SearchFilters, AttractionType, ActivityType } from '../types';
+import { CartItem, City, Flight, Activity, SearchFilters, AttractionType, ActivityType, User } from '../types';
 import { cities, attractions, activities, flights } from '../data/mockData';
 import { toast } from '../components/ui/use-toast';
 
@@ -12,6 +12,7 @@ interface AppContextType {
   currentCity: City | null;
   searchFilters: SearchFilters;
   selectedTab: number;
+  user: User | null;
   
   setCurrentCity: (city: City | null) => void;
   setSearchFilters: (filters: SearchFilters) => void;
@@ -21,6 +22,11 @@ interface AppContextType {
   clearCart: () => void;
   searchFlights: (departure: string, arrival: string, date: string) => Flight[];
   searchActivities: (cityId: string, filters?: SearchFilters) => Activity[];
+  login: (email: string, password: string) => void;
+  register: (userData: Partial<User>) => void;
+  logout: () => void;
+  updateUser: (userData: Partial<User>) => void;
+  isLoggedIn: () => boolean;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -30,6 +36,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
   const [cart, setCart] = useState<CartItem[]>([]);
   const [searchFilters, setSearchFilters] = useState<SearchFilters>({});
   const [selectedTab, setSelectedTab] = useState(0);
+  const [user, setUser] = useState<User | null>(null);
 
   const addToCart = (item: CartItem) => {
     if (cart.some(cartItem => cartItem.id === item.id)) {
@@ -89,6 +96,71 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     });
   };
 
+  // Authentication methods
+  const login = (email: string, password: string) => {
+    // In a real app, you would verify credentials against a backend
+    // For now, we'll create a mock user
+    const mockUser: User = {
+      id: '1',
+      name: 'Utilisateur Test',
+      email: email,
+      phone: '+213 123 456 789',
+      bookings: [],
+      isLoggedIn: true
+    };
+    
+    setUser(mockUser);
+    localStorage.setItem('user', JSON.stringify(mockUser));
+  };
+  
+  const register = (userData: Partial<User>) => {
+    // In a real app, you would send this data to a backend
+    const newUser: User = {
+      id: Math.random().toString(36).substring(2, 9),
+      name: userData.name || 'Utilisateur',
+      email: userData.email || '',
+      phone: userData.phone,
+      bookings: [],
+      isLoggedIn: true
+    };
+    
+    setUser(newUser);
+    localStorage.setItem('user', JSON.stringify(newUser));
+  };
+  
+  const logout = () => {
+    setUser(null);
+    localStorage.removeItem('user');
+  };
+  
+  const updateUser = (userData: Partial<User>) => {
+    if (!user) return;
+    
+    const updatedUser = {
+      ...user,
+      ...userData
+    };
+    
+    setUser(updatedUser);
+    localStorage.setItem('user', JSON.stringify(updatedUser));
+  };
+  
+  const isLoggedIn = () => {
+    return !!user?.isLoggedIn;
+  };
+  
+  // Check for a saved user in localStorage on app init
+  React.useEffect(() => {
+    const savedUser = localStorage.getItem('user');
+    if (savedUser) {
+      try {
+        setUser(JSON.parse(savedUser));
+      } catch (e) {
+        localStorage.removeItem('user');
+      }
+    }
+  }, []);
+
   const value = useMemo(() => ({
     cities,
     flights,
@@ -97,6 +169,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     currentCity,
     searchFilters,
     selectedTab,
+    user,
     setCurrentCity,
     setSearchFilters,
     setSelectedTab,
@@ -105,7 +178,12 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     clearCart,
     searchFlights,
     searchActivities,
-  }), [cart, currentCity, searchFilters, selectedTab]);
+    login,
+    register,
+    logout,
+    updateUser,
+    isLoggedIn
+  }), [cart, currentCity, searchFilters, selectedTab, user]);
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
 };

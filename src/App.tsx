@@ -14,6 +14,9 @@ import CityDetailPage from "./pages/CityDetailPage";
 import AttractionDetailPage from "./pages/AttractionDetailPage";
 import ActivityDetailPage from "./pages/ActivityDetailPage";
 import CartPage from "./pages/CartPage";
+import LoginPage from "./pages/LoginPage";
+import RegisterPage from "./pages/RegisterPage";
+import ProfilePage from "./pages/ProfilePage";
 import NotFound from "./pages/NotFound";
 import Navigation from "./components/Navigation";
 
@@ -37,6 +40,9 @@ const App = () => (
                 <Route path="/attraction/:attractionId" element={<><AttractionDetailPage /><Navigation /></>} />
                 <Route path="/activity/:activityId" element={<><ActivityDetailPage /><Navigation /></>} />
                 <Route path="/cart" element={<><CartPage /><Navigation /></>} />
+                <Route path="/login" element={<><LoginPage /><Navigation /></>} />
+                <Route path="/register" element={<><RegisterPage /><Navigation /></>} />
+                <Route path="/profile" element={<><ProfilePage /><Navigation /></>} />
                 <Route path="*" element={<><NotFound /><Navigation /></>} />
               </Routes>
             </main>

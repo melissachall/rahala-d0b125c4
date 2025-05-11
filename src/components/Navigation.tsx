@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Home, Plane, Map, CalendarDays, ShoppingCart } from 'lucide-react';
+import { Home, Plane, Map, CalendarDays, ShoppingCart, UserRound } from 'lucide-react';
 import { Badge } from './ui/badge';
 import { cn } from '@/lib/utils';
 import { useApp } from '@/context/AppContext';
@@ -10,7 +10,7 @@ import { useIsMobile } from '@/hooks/use-mobile';
 const Navigation = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { cart } = useApp();
+  const { cart, user } = useApp();
   const isMobile = useIsMobile();
 
   const navItems = [
@@ -31,6 +31,11 @@ const Navigation = () => {
       ), 
       label: "Cart", 
       path: "/cart" 
+    },
+    { 
+      icon: <UserRound size={24} />, 
+      label: user?.isLoggedIn ? "Profil" : "Connexion", 
+      path: user?.isLoggedIn ? "/profile" : "/login" 
     },
   ];
 
